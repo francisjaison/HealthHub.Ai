@@ -1,0 +1,10 @@
+# Database connection
+DATABASE_URL=postgresql://postgres:DraGo@12345@db.dtzgruamjqywugdedrpn.supabase.co:5432/postgres
+REACT_APP_SUPABASE_URL=https://dtzgruamjqywugdedrpn.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0emdydWFtanF5d3VnZGVkcnBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMDQ0MzEsImV4cCI6MjA2MTY4MDQzMX0.wgEyYbyMJVbUc1DdO1E1EoqSdbSdK-xCybb9tJbtHtY
+
+# API keys
+GEMINI_API_KEY=AIzaSyAu4GFDGSwt_wRtLX59oZecm3RUMzhczAo
+
+# Other configuration
+DEBUG=False 

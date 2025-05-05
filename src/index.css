@@ -1,0 +1,253 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode */
+    --background: 60 33% 98%;
+    --foreground: 150 9% 15%;
+
+    --muted: 60 10% 90%;
+    --muted-foreground: 150 5% 40%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 9% 15%;
+
+    --border: 60 6% 85%;
+    --input: 60 6% 80%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 150 9% 15%;
+
+    --primary: 141 11% 33%;
+    --primary-foreground: 60 33% 98%;
+
+    --secondary: 60 23% 63%;
+    --secondary-foreground: 150 9% 15%;
+
+    --accent: 60 23% 95%;
+    --accent-foreground: 150 9% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 150 9% 98%;
+
+    --ring: 150 9% 30%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 141 11% 33%;
+    --sidebar-primary-foreground: 60 33% 98%;
+    --sidebar-accent: 60 23% 95%;
+    --sidebar-accent-foreground: 150 9% 15%;
+    --sidebar-border: 60 6% 85%;
+    --sidebar-ring: 150 9% 30%;
+  }
+
+  .dark {
+    /* Dark mode */
+    --background: 150 9% 10%;
+    --foreground: 60 33% 95%;
+
+    --muted: 150 5% 20%;
+    --muted-foreground: 150 5% 60%;
+
+    --accent: 150 5% 25%;
+    --accent-foreground: 60 33% 95%;
+
+    --popover: 150 10% 12%;
+    --popover-foreground: 60 33% 95%;
+
+    --border: 150 5% 20%;
+    --input: 150 5% 25%;
+
+    --card: 150 10% 15%;
+    --card-foreground: 60 33% 95%;
+
+    --primary: 60 23% 63%;
+    --primary-foreground: 150 9% 10%;
+
+    --secondary: 141 11% 33%;
+    --secondary-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 150 10% 95%;
+
+    --ring: 60 23% 63%;
+
+    /* Sidebar */
+    --sidebar-background: 150 10% 12%;
+    --sidebar-foreground: 60 33% 95%;
+    --sidebar-primary: 60 23% 63%;
+    --sidebar-primary-foreground: 150 9% 10%;
+    --sidebar-accent: 150 5% 25%;
+    --sidebar-accent-foreground: 60 33% 95%;
+    --sidebar-border: 150 5% 20%;
+    --sidebar-ring: 60 23% 63%;
+  }
+}
+
+body {
+  @apply bg-background text-foreground antialiased scroll-smooth;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted/50;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted/80;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-muted/30;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-muted/70;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted;
+}
+
+/* Animation classes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease forwards;
+}
+
+/* For text that appears on hover */
+.hover-text {
+  @apply opacity-0 transition-opacity duration-300;
+}
+
+.group:hover .hover-text {
+  @apply opacity-100;
+}
+
+/* Glass effect styling */
+.glass {
+  @apply backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10;
+}
+
+/* Improved focus visible styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background transition-shadow duration-300;
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Typography enhancements */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-medium tracking-tight;
+}
+
+/* Prose styles for rich text content */
+.prose {
+  @apply max-w-none text-foreground;
+}
+
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose h2 {
+  @apply text-2xl font-bold mt-8 mb-4 text-forest dark:text-cream;
+}
+
+.prose h3 {
+  @apply text-xl font-semibold mt-6 mb-3 text-forest dark:text-cream;
+}
+
+.prose a {
+  @apply text-forest dark:text-cream font-medium hover:underline;
+}
+
+.prose ul, .prose ol {
+  @apply my-4 pl-6;
+}
+
+.prose li {
+  @apply mb-2;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-sage pl-4 italic;
+}
+
+/* Form control label visibility improvement */
+.visually-hidden {
+  @apply sr-only;
+}
+
+label {
+  @apply text-forest dark:text-cream font-medium;
+}

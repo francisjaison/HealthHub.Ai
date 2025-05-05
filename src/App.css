@@ -1,0 +1,176 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.667));
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.667));
+}
+
+/* Enhance logo animation to work well in both light and dark mode */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s ease-in-out;
+  }
+}
+
+.card {
+  padding: 2em;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(10px); /* Safari compatibility */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.dark .card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.dark .read-the-docs {
+  color: #aaa;
+}
+
+/* Animations for page transitions and components */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Page transition effects */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Improved focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #B2AC88;
+  outline-offset: 2px;
+}
+
+.dark :focus-visible {
+  outline: 2px solid #c8c4a9;
+}
+
+/* Enhanced link hover effects */
+a:not(.button) {
+  transition: color 0.2s ease;
+}
+
+a:not(.button):hover {
+  color: #4D5D53;
+}
+
+.dark a:not(.button):hover {
+  color: #c8c4a9;
+}
+
+/* Background grid pattern for subtle texture */
+.bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(178, 172, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(178, 172, 136, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dark .bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(200, 196, 169, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(200, 196, 169, 0.05) 1px, transparent 1px);
+}
+
+/* Form element improvements */
+input, textarea, select {
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #4D5D53;
+  box-shadow: 0 0 0 2px rgba(77, 93, 83, 0.2);
+}
+
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+  border-color: #c8c4a9;
+  box-shadow: 0 0 0 2px rgba(200, 196, 169, 0.2);
+}
