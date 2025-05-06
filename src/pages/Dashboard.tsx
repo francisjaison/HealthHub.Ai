@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -18,11 +18,18 @@ import {
   AlertCircle,
   LucideBarChart,
   LucideLineChart,
+<<<<<<< HEAD
   PieChart,
   Dumbbell,
   Brain,
   Apple,
   ArrowRight
+=======
+  MessageSquare,
+  MinusCircle,
+  MaximizeIcon,
+  MinimizeIcon
+>>>>>>> 94c70cf811a188e59231a8a5aadb069ccc913416
 } from "lucide-react";
 import { 
   AreaChart, Area, 
@@ -40,6 +47,8 @@ import {
 } from "@/lib/api";
 import { format } from 'date-fns';
 import SparklineChart from "@/components/SparklineChart";
+import { Link } from "react-router-dom";
+import AIChat from "@/components/chat/AIChat";
 
 const formatAppointmentDateTime = (dateTimeString: string) => {
   const date = new Date(dateTimeString);
@@ -66,6 +75,9 @@ const iconMap = {
 const Dashboard = () => {
   const [period, setPeriod] = useState<'day' | 'week' | 'month'>("week");
   const { isAuthenticated } = useAuth();
+  const [showChat, setShowChat] = useState(false);
+  const [minimizeChat, setMinimizeChat] = useState(false);
+  const chatRef = useRef<HTMLDivElement>(null);
 
   const { 
     data: summaryData,
@@ -137,6 +149,43 @@ const Dashboard = () => {
     </div>
   );
 
+  const scrollToChat = () => {
+    setShowChat(true);
+    setMinimizeChat(false);
+    if (chatRef.current) {
+      chatRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle navigation to chat section via URL hash
+  useEffect(() => {
+    // Check if there's a hash in the URL
+    if (window.location.hash === '#ai-chat') {
+      setShowChat(true);
+      setMinimizeChat(false);
+      // Scroll to chat section with a small delay to ensure components are rendered
+      setTimeout(() => {
+        chatRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    // Listen for hash changes
+    const handleHashChange = () => {
+      if (window.location.hash === '#ai-chat') {
+        setShowChat(true);
+        setMinimizeChat(false);
+        setTimeout(() => {
+          chatRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -150,6 +199,15 @@ const Dashboard = () => {
             <Button variant="outline" size="sm">
               <Bell className="mr-2 h-4 w-4" />
               Alerts
+            </Button>
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="bg-forest hover:bg-forest-dark text-white"
+              onClick={scrollToChat}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              AI Chat
             </Button>
             <Button variant="outline" size="sm">
               <User className="mr-2 h-4 w-4" />
@@ -570,6 +628,65 @@ const Dashboard = () => {
            )
         )
       }
+
+        {/* AI Chat Integration - Add this section before the end of the container div */}
+        <div ref={chatRef} id="ai-chat" className="mt-8 scroll-mt-24">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between py-3">
+              <CardTitle className="text-xl font-semibold text-forest flex items-center">
+                <MessageSquare className="mr-2 h-5 w-5" />
+                AI Health Assistant
+              </CardTitle>
+              <div className="flex space-x-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setMinimizeChat(!minimizeChat)}
+                  className="h-8 w-8 p-0"
+                >
+                  {minimizeChat ? <MaximizeIcon className="h-4 w-4" /> : <MinimizeIcon className="h-4 w-4" />}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowChat(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <MinusCircle className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            {showChat && !minimizeChat && (
+              <CardContent className="p-0">
+                <div className="h-[600px]">
+                  <AIChat floatingMode={false} initiallyOpen={true} />
+                </div>
+              </CardContent>
+            )}
+            {showChat && minimizeChat && (
+              <CardContent className="p-4">
+                <div className="text-center text-muted-foreground">
+                  <p>Chat is minimized. Click the maximize button to expand.</p>
+                </div>
+              </CardContent>
+            )}
+            {!showChat && (
+              <CardContent className="p-6">
+                <div className="text-center">
+                  <MessageSquare className="h-12 w-12 text-forest/40 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">AI Health Assistant</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Get instant answers to your health questions, medication information, 
+                    and personalized wellness advice.
+                  </p>
+                  <Button onClick={() => setShowChat(true)} className="bg-forest hover:bg-forest-dark text-white">
+                    Start Chat
+                  </Button>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
       </div>
     </Layout>
   );

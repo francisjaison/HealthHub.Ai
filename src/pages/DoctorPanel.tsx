@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +27,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { FileManagement } from "@/components/file-management";
 
 const DoctorPanel = () => {
   const [activeTab, setActiveTab] = useState("appointments");
@@ -493,6 +493,78 @@ const DoctorPanel = () => {
                       </TableRow>
                     </TableBody>
                   </Table>
+                </CardContent>
+              </Card>
+            )}
+            
+            {activeTab === "records" && (
+              <div>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xl font-semibold text-forest">Medical Records</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FileManagement userRole="doctor" patientId={0} />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {activeTab === "messages" && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-xl font-semibold text-forest">Messages</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" />
+                          <AvatarFallback>JS</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">Jane Smith</p>
+                          <p className="text-sm text-muted-foreground">20 minutes ago</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150" />
+                          <AvatarFallback>MB</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">Michael Brown</p>
+                          <p className="text-sm text-muted-foreground">1 hour ago</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" />
+                          <AvatarFallback>AJ</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">Alex Johnson</p>
+                          <p className="text-sm text-muted-foreground">3 hours ago</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
