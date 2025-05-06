@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,8 @@ import {
   Flame,
   Thermometer,
   Calendar,
-  Utensils
+  Utensils,
+  MessageSquare
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -216,12 +216,13 @@ const Header = ({ isDarkMode, toggleDarkMode }: HeaderProps) => {
             </Button>
             
             <Button
-              variant={isActive('/chat') ? 'secondary' : 'ghost'}
-              className="flex items-center"
+              variant="default"
+              className="flex items-center bg-forest text-white hover:bg-forest-dark"
               asChild
             >
-              <Link to="/chat">
-                AI Chat
+              <Link to="/dashboard#ai-chat">
+                <MessageSquare className="mr-1 h-4 w-4" />
+                <span>AI Chat</span>
               </Link>
             </Button>
             
