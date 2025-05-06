@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./use-toast";
@@ -57,10 +56,11 @@ export const useAuthProvider = (): AuthContextType => {
           setIsAuthenticated(true);
           localStorage.setItem("user", JSON.stringify(adminUser));
           toast({
-            title: "Login Successful",
-            description: "Welcome to the admin panel!",
+            title: "Admin Login Successful",
+            description: "Welcome to the admin dashboard!",
           });
-          navigate("/admin");
+          // Redirect to admin dashboard
+          navigate("/admin-dashboard");
           return true;
         }
       } else if (email === "doctor@example.com") {
@@ -68,7 +68,7 @@ export const useAuthProvider = (): AuthContextType => {
           const doctorUser = { 
             email, 
             role: "doctor" as UserRole, 
-            name: "Doctor User", 
+            name: "Dr. Sarah Johnson", 
             provider: "email" as AuthProvider,
             profileCompleted: true,
             uid: `email-${Math.random().toString(36).substring(2)}`
@@ -77,10 +77,11 @@ export const useAuthProvider = (): AuthContextType => {
           setIsAuthenticated(true);
           localStorage.setItem("user", JSON.stringify(doctorUser));
           toast({
-            title: "Login Successful",
-            description: "Welcome to the doctor panel!",
+            title: "Doctor Login Successful",
+            description: "Welcome to the doctor dashboard!",
           });
-          navigate("/doctor-panel");
+          // Redirect to doctor dashboard
+          navigate("/doctor");
           return true;
         }
       }

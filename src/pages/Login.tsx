@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +26,20 @@ const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const location = useLocation();
+  const [activeRole, setActiveRole] = useState<"user" | "doctor" | "admin">("user");
+  
+  // Check if there's a specific role in the URL
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("admin")) {
+      setActiveRole("admin");
+      form.setValue("email", "admin@example.com");
+    } else if (path.includes("doctor")) {
+      setActiveRole("doctor");
+      form.setValue("email", "doctor@example.com");
+    }
+  }, [location]);
 
   // Define form
   const form = useForm<LoginFormValues>({
@@ -134,6 +147,48 @@ const Login = () => {
                   </Button>
                 </form>
               </Form>
+
+              <div className="mt-4 p-3 border rounded-md bg-sage/10 dark:bg-forest-light/10">
+                <h3 className="text-sm font-semibold mb-2">Role-specific logins:</h3>
+                <div className="space-y-2 text-xs">
+                  <button 
+                    className={`w-full text-left p-2 rounded-md flex justify-between items-center ${activeRole === "admin" ? "bg-forest/20 dark:bg-forest/40" : "hover:bg-forest/10 dark:hover:bg-forest/20"}`}
+                    onClick={() => {
+                      setActiveRole("admin");
+                      form.setValue("email", "admin@example.com");
+                      form.setValue("password", "admin123");
+                    }}
+                    type="button"
+                  >
+                    <span className="font-medium">Admin:</span>
+                    <span className="font-mono">admin@example.com / admin123</span>
+                  </button>
+                  <button 
+                    className={`w-full text-left p-2 rounded-md flex justify-between items-center ${activeRole === "doctor" ? "bg-forest/20 dark:bg-forest/40" : "hover:bg-forest/10 dark:hover:bg-forest/20"}`}
+                    onClick={() => {
+                      setActiveRole("doctor");
+                      form.setValue("email", "doctor@example.com");
+                      form.setValue("password", "doctor123");
+                    }}
+                    type="button"
+                  >
+                    <span className="font-medium">Doctor:</span>
+                    <span className="font-mono">doctor@example.com / doctor123</span>
+                  </button>
+                  <button 
+                    className={`w-full text-left p-2 rounded-md flex justify-between items-center ${activeRole === "user" ? "bg-forest/20 dark:bg-forest/40" : "hover:bg-forest/10 dark:hover:bg-forest/20"}`}
+                    onClick={() => {
+                      setActiveRole("user");
+                      form.setValue("email", "");
+                      form.setValue("password", "");
+                    }}
+                    type="button"
+                  >
+                    <span className="font-medium">Regular User:</span>
+                    <span className="font-mono">any email / password (min 6 chars)</span>
+                  </button>
+                </div>
+              </div>
 
               <div className="mt-6">
                 <div className="relative">
