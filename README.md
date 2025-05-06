@@ -1,4 +1,32 @@
-# Welcome to your Lovable project
+# HealthHub AI
+
+A React-based healthcare application with AI-powered features.
+
+## Test Credentials
+
+### Admin Access
+- Email: admin@example.com
+- Password: admin123
+
+### Doctor Access
+- Email: doctor@example.com
+- Password: doctor123
+
+### Regular User
+- You can sign up for a new account
+- Or use any valid email/password (min 6 characters)
+
+## Features
+
+- Admin Panel: User management, system monitoring, security settings
+- Doctor Panel: Patient management, appointments, medical records
+- Patient Dashboard: Health tracking, AI chat assistant, personalized recommendations
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Run the development server with `npm run dev`
 
 ## Project info
 

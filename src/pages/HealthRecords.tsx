@@ -6,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { 
   Search, 
   FileText, 
@@ -23,16 +21,13 @@ import {
   Upload,
   Loader2,
   Eye,
-  Camera,
-  Lock,
-  Database
+  Camera
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { blockchainService, storeHealthRecordOnBlockchain, getHealthRecordFromBlockchain, BlockchainHealthRecord } from "@/lib/blockchain";
 import axios from 'axios';
 
 // Define API base URL with fallback options 
@@ -49,7 +44,6 @@ interface DocumentMetadata {
   category: string;
   uploadedAt: Date;
   notes?: string;
-  blockchainId?: string; // New field for blockchain record ID
 }
 
 // Add a new interface for document responses
@@ -63,8 +57,6 @@ interface DocumentResponse {
   category: string;
   uploaded_at: string;
   notes?: string;
-  blockchain_id?: string; // New field for blockchain record ID
-  blockchain_verified?: boolean; // New field to indicate blockchain verification
 }
 
 // Add a mockUpload function for testing when backend is unavailable
@@ -72,49 +64,18 @@ const mockUploadDocument = async (file: File, metadata: DocumentMetadata) => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1500));
   
-  try {
-    // First store on blockchain
-    const blockchainId = await storeHealthRecordOnBlockchain(
-      '1', // Mock user ID
-      metadata.category,
-      {
-        fileName: metadata.fileName,
-        fileType: metadata.fileType,
-        fileSize: metadata.fileSize,
-        category: metadata.category,
-        description: metadata.notes
-      }
-    );
-    
-    // Simulate success
-    return {
-      id: Math.floor(Math.random() * 1000),
-      fileName: metadata.fileName,
-      fileType: metadata.fileType,
-      fileSize: metadata.fileSize,
-      category: metadata.category,
-      uploadedAt: new Date(),
-      notes: metadata.notes,
-      file_path: "mock_file_path",
-      user_id: 1,
-      blockchain_id: blockchainId,
-      blockchain_verified: true
-    };
-  } catch (error) {
-    console.error("Error storing document on blockchain:", error);
-    // Fallback to regular mock without blockchain
-    return {
-      id: Math.floor(Math.random() * 1000),
-      fileName: metadata.fileName,
-      fileType: metadata.fileType,
-      fileSize: metadata.fileSize,
-      category: metadata.category,
-      uploadedAt: new Date(),
-      notes: metadata.notes,
-      file_path: "mock_file_path",
-      user_id: 1
-    };
-  }
+  // Simulate success
+  return {
+    id: Math.floor(Math.random() * 1000),
+    fileName: metadata.fileName,
+    fileType: metadata.fileType,
+    fileSize: metadata.fileSize,
+    category: metadata.category,
+    uploadedAt: new Date(),
+    notes: metadata.notes,
+    file_path: "mock_file_path",
+    user_id: 1
+  };
 };
 
 // Add a function to check backend connectivity
@@ -156,23 +117,6 @@ const checkBackendConnectivity = async (): Promise<boolean> => {
   }
 };
 
-// Add a function to render blockchain verification badge
-const BlockchainVerificationBadge = ({ verified }: { verified?: boolean }) => {
-  if (verified === undefined) return null;
-  
-  return verified ? (
-    <span className="inline-flex items-center px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs rounded-md">
-      <Lock className="h-3 w-3 mr-1" />
-      Blockchain Verified
-    </span>
-  ) : (
-    <span className="inline-flex items-center px-2 py-1 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 text-xs rounded-md">
-      <AlertCircle className="h-3 w-3 mr-1" />
-      Verification Pending
-    </span>
-  );
-};
-
 const HealthRecords = () => {
   const [activeTab, setActiveTab] = useState("medical");
   const { toast } = useToast();
@@ -209,7 +153,7 @@ const HealthRecords = () => {
       const isBackendAvailable = await checkBackendConnectivity();
       if (!isBackendAvailable) {
         // Use mock data instead of throwing error
-        const mockDocuments = [
+        setUserDocuments([
           {
             id: 1,
             user_id: 1,
@@ -219,9 +163,7 @@ const HealthRecords = () => {
             file_size: 1048576,
             category: "Lab Result",
             uploaded_at: new Date().toISOString(),
-            notes: "Annual checkup",
-            blockchain_id: `record_${Math.random().toString(36).substring(2, 15)}`,
-            blockchain_verified: true
+            notes: "Annual checkup"
           },
           {
             id: 2,
@@ -231,19 +173,15 @@ const HealthRecords = () => {
             file_type: "image/jpeg",
             file_size: 524288,
             category: "Vaccination Record",
-            uploaded_at: new Date().toISOString(),
-            blockchain_id: `record_${Math.random().toString(36).substring(2, 15)}`,
-            blockchain_verified: true
+            uploaded_at: new Date().toISOString()
           }
-        ];
-        
-        setUserDocuments(mockDocuments);
+        ]);
         
         // Silent mode in production, only show message in development
         if (import.meta.env.DEV && !sessionStorage.getItem('offline_mode_notified')) {
           toast({
-            title: "Using offline mode with blockchain",
-            description: "Could not connect to server. Showing sample data from blockchain ledger."
+            title: "Using offline mode",
+            description: "Could not connect to server. Showing sample data instead."
           });
           sessionStorage.setItem('offline_mode_notified', 'true');
         }
@@ -270,40 +208,7 @@ const HealthRecords = () => {
       
       if (response.ok) {
         const data = await response.json();
-        
-        // Verify document integrity with blockchain when available
-        const documentsWithVerification = await Promise.all(
-          data.map(async (doc: DocumentResponse) => {
-            if (doc.blockchain_id) {
-              try {
-                // Attempt to verify document against blockchain
-                const blockchainRecord = await getHealthRecordFromBlockchain(doc.blockchain_id);
-                
-                // Check if the hash matches what's expected
-                const calculatedHash = blockchainService.generateHash({
-                  patientId: doc.user_id.toString(),
-                  fileData: {
-                    fileName: doc.file_name,
-                    fileType: doc.file_type,
-                    fileSize: doc.file_size,
-                    category: doc.category,
-                    description: doc.notes
-                  },
-                  // Note: In a real app, we'd need to use the original timestamp
-                });
-                
-                // In a real implementation, we would verify the hash more thoroughly
-                doc.blockchain_verified = true;
-              } catch (error) {
-                console.warn(`Blockchain verification failed for document ${doc.id}:`, error);
-                doc.blockchain_verified = false;
-              }
-            }
-            return doc;
-          })
-        );
-        
-        setUserDocuments(documentsWithVerification);
+        setUserDocuments(data);
       } else {
         console.error('Failed to fetch documents:', response.status, response.statusText);
         throw new Error(`Server responded with ${response.status}`);
@@ -321,9 +226,7 @@ const HealthRecords = () => {
           file_size: 1048576,
           category: "Lab Result",
           uploaded_at: new Date().toISOString(),
-          notes: "Annual checkup",
-          blockchain_id: `record_${Math.random().toString(36).substring(2, 15)}`,
-          blockchain_verified: true
+          notes: "Annual checkup"
         },
         {
           id: 2,
@@ -333,9 +236,7 @@ const HealthRecords = () => {
           file_type: "image/jpeg",
           file_size: 524288,
           category: "Vaccination Record",
-          uploaded_at: new Date().toISOString(),
-          blockchain_id: `record_${Math.random().toString(36).substring(2, 15)}`,
-          blockchain_verified: true
+          uploaded_at: new Date().toISOString()
         }
       ]);
       
@@ -584,52 +485,6 @@ const HealthRecords = () => {
       // Get auth token (assuming it's stored in localStorage)
       const token = localStorage.getItem('authToken');
       
-      // First, store the document on blockchain
-      let blockchainId: string | undefined;
-      let isBlockchainStored = false;
-      
-      try {
-        // Generate a toast for blockchain storage
-        toast({
-          title: "Blockchain Storage",
-          description: "Securely storing medical record on blockchain...",
-        });
-        
-        // Store on blockchain
-        blockchainId = await storeHealthRecordOnBlockchain(
-          '1', // Mock user ID or get from auth context in real app
-          documentType,
-          {
-            fileName: selectedFile.name,
-            fileType: selectedFile.type,
-            fileSize: selectedFile.size,
-            category: documentType,
-            description: additionalNotes
-          }
-        );
-        
-        isBlockchainStored = true;
-        
-        // Add blockchain ID to metadata
-        documentData.blockchainId = blockchainId;
-        
-        // Update formData with new metadata including blockchain ID
-        formData.set('metadata', JSON.stringify(documentData));
-        
-        toast({
-          title: "Blockchain Verification",
-          description: "Medical record verified and secured on blockchain",
-        });
-      } catch (blockchainError) {
-        console.error("Blockchain storage failed:", blockchainError);
-        // Continue with regular upload even if blockchain fails
-        toast({
-          title: "Blockchain Storage Failed",
-          description: "Continuing with standard secure storage",
-          variant: "destructive"
-        });
-      }
-      
       // Check if backend is available
       const isBackendAvailable = await checkBackendConnectivity();
       
@@ -667,12 +522,6 @@ const HealthRecords = () => {
           
           result = await response.json();
           
-          // Add blockchain information to result
-          if (isBlockchainStored && blockchainId) {
-            result.blockchain_id = blockchainId;
-            result.blockchain_verified = true;
-          }
-          
           // Refresh documents list after successful upload
           fetchUserDocuments();
         } catch (error) {
@@ -698,9 +547,7 @@ const HealthRecords = () => {
       // Handle successful upload
       toast({
         title: "File Uploaded Successfully",
-        description: isBlockchainStored 
-          ? `Your ${documentType.toLowerCase()} has been uploaded and secured with blockchain verification.`
-          : `Your ${documentType.toLowerCase()} has been uploaded.`
+        description: `Your ${documentType.toLowerCase()} has been uploaded.`
       });
 
       // Reset form
@@ -900,20 +747,6 @@ const HealthRecords = () => {
     }
   };
 
-  // Fix the getStatusColor function if it doesn't exist
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      case "expired":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-      case "upcoming":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300";
-    }
-  };
-
   return (
     <Layout>
       <div className="relative overflow-hidden">
@@ -948,30 +781,10 @@ const HealthRecords = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-6 p-3 bg-sage/10 dark:bg-forest-light/10 rounded-lg flex items-center space-x-3 border border-sage/30 dark:border-sage/20"
           >
-            <Shield className="text-forest dark:text-sage-light h-5 w-5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground dark:text-sage/80">
-                Your health records are securely encrypted and stored on a decentralized blockchain network. This ensures your data cannot be altered and provides complete transparency and privacy control.
-              </p>
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-xs text-muted-foreground dark:text-sage/60 flex items-center">
-                  <Database className="h-3 w-3 mr-1" /> Records with <Lock className="h-3 w-3 mx-1" /> icon have blockchain verification
-                </p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-xs h-7 px-2 py-1 bg-forest/10 hover:bg-forest/20 dark:bg-sage/10 dark:hover:bg-sage/20 border-0"
-                  onClick={() => {
-                    toast({
-                      title: "Blockchain Security",
-                      description: "Your data is secured using advanced blockchain technology. Each record is cryptographically verified and tamper-proof.",
-                    });
-                  }}
-                >
-                  Learn About Blockchain
-                </Button>
-              </div>
-            </div>
+            <Shield className="text-forest dark:text-sage-light h-5 w-5" />
+            <p className="text-sm text-muted-foreground dark:text-sage/80">
+              Your health records are securely encrypted and only accessible by you and your authorized healthcare providers.
+            </p>
           </motion.div>
 
           {/* Tabs */}
@@ -1058,7 +871,6 @@ const HealthRecords = () => {
                     ))}
                   </TabsContent>
                   
-                  {/* Prescriptions Tab */}
                   <TabsContent value="prescriptions" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h2 className="text-lg font-semibold text-forest dark:text-sage-light">Active Prescriptions</h2>
@@ -1068,65 +880,19 @@ const HealthRecords = () => {
                       </Button>
                     </div>
                     
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Medication</TableHead>
-                            <TableHead>Dosage</TableHead>
-                            <TableHead>Frequency</TableHead>
-                            <TableHead>Doctor</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Verification</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {[
-                            { 
-                              name: "Amoxicillin", 
-                              dosage: "500mg", 
-                              frequency: "3 times per day", 
-                              date: "Apr 28, 2025", 
-                              doctor: "Dr. Emily Chen",
-                              status: "active" 
-                            },
-                            { 
-                              name: "Lisinopril", 
-                              dosage: "10mg", 
-                              frequency: "once daily", 
-                              date: "Mar 10, 2025", 
-                              doctor: "Dr. Robert Johnson",
-                              status: "active" 
-                            },
-                            { 
-                              name: "Vitamin D", 
-                              dosage: "2000 IU", 
-                              frequency: "once daily", 
-                              date: "Jan 25, 2025", 
-                              doctor: "Dr. Sarah Williams",
-                              status: "active" 
-                            }
-                          ].map((prescription, idx) => (
-                            <TableRow key={idx}>
-                              <TableCell className="font-medium">{prescription.name}</TableCell>
-                              <TableCell>{prescription.dosage}</TableCell>
-                              <TableCell>{prescription.frequency}</TableCell>
-                              <TableCell>{prescription.doctor}</TableCell>
-                              <TableCell>{prescription.date}</TableCell>
-                              <TableCell>
-                                <Badge className={getStatusColor(prescription.status)}>
-                                  {prescription.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <BlockchainVerificationBadge verified={true} />
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                    {[
+                      { name: "Amoxicillin", date: "Apr 28, 2025", doctor: "Dr. Emily Chen" },
+                      { name: "Lisinopril", date: "Mar 10, 2025", doctor: "Dr. Robert Johnson" },
+                      { name: "Vitamin D", date: "Jan 25, 2025", doctor: "Dr. Sarah Williams" }
+                    ].map((prescription, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-sage-light/10 dark:bg-forest-light/10 hover:bg-sage-light/20 dark:hover:bg-forest-light/20 rounded-lg transition-all border border-sage/10 dark:border-sage/20">
+                        <div>
+                          <p className="font-medium text-forest-dark dark:text-sage-light">{prescription.name}</p>
+                          <p className="text-sm text-muted-foreground dark:text-sage/70">Prescribed on {prescription.date} by {prescription.doctor}</p>
+                        </div>
+                        <Button variant="ghost" size="sm" className="hover:bg-forest/10 dark:hover:bg-sage/10">View</Button>
+                      </div>
+                    ))}
                   </TabsContent>
                   
                   <TabsContent value="vaccinations" className="space-y-4">
@@ -1289,11 +1055,6 @@ const HealthRecords = () => {
                     />
                   </div>
                   
-                  <div className="flex items-center space-x-2 text-xs text-muted-foreground border rounded-md p-2 bg-sage/5 dark:bg-forest-light/5">
-                    <Lock className="h-4 w-4 text-forest dark:text-sage-light flex-shrink-0" />
-                    <span>Files are encrypted and secured with blockchain technology for tamper-proof record keeping</span>
-                  </div>
-                  
                   <Button 
                     className="w-full bg-forest hover:bg-forest-dark dark:bg-sage dark:text-forest dark:hover:bg-sage-light transition-colors"
                     disabled={!selectedFile || !documentType || isUploading}
@@ -1349,16 +1110,11 @@ const HealthRecords = () => {
                             </div>
                             <div>
                               <p className="font-medium text-forest-dark dark:text-sage-light">{doc.file_name}</p>
-                              <div className="flex items-center space-x-2">
-                                <p className="text-xs text-muted-foreground dark:text-sage/70">
-                                  {(doc.file_size / 1024).toFixed(1)} KB 
-                                  {doc.category && ` • ${doc.category}`} • 
-                                  {new Date(doc.uploaded_at).toLocaleDateString()}
-                                </p>
-                                {doc.blockchain_verified && (
-                                  <BlockchainVerificationBadge verified={doc.blockchain_verified} />
-                                )}
-                              </div>
+                              <p className="text-xs text-muted-foreground dark:text-sage/70">
+                                {(doc.file_size / 1024).toFixed(1)} KB 
+                                {doc.category && ` • ${doc.category}`} • 
+                                {new Date(doc.uploaded_at).toLocaleDateString()}
+                              </p>
                             </div>
                           </div>
                           <div className="flex space-x-1">

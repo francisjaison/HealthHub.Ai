@@ -18,7 +18,6 @@ import {
   ChevronRight,
   UserIcon
 } from "lucide-react";
-import AIChat from "@/components/chat/AIChat";
 
 // Define Testimonial data outside the component
 const testimonials = [
@@ -571,10 +570,6 @@ const Home = () => {
           </section>
         </div>
       </section>
-      
-      {/* AI Chat Component */}
-      <AIChat />
-      
     </Layout>
   );
 };

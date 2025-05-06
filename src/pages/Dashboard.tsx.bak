@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   BarChart, 
   LineChart, 
@@ -27,8 +26,7 @@ import {
   MessageSquare,
   MinusCircle,
   Maximize,
-  Minimize,
-  Sparkles
+  Minimize
 } from "lucide-react";
 import { 
   AreaChart, Area, 
@@ -73,9 +71,6 @@ const iconMap = {
 const Dashboard = () => {
   const [period, setPeriod] = useState<'day' | 'week' | 'month'>("week");
   const { isAuthenticated } = useAuth();
-  const [showChat, setShowChat] = useState(false);
-  const [minimizeChat, setMinimizeChat] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
 
   const { 
     data: summaryData,
@@ -147,43 +142,6 @@ const Dashboard = () => {
     </div>
   );
 
-  const scrollToChat = () => {
-    setShowChat(true);
-    setMinimizeChat(false);
-    if (chatRef.current) {
-      chatRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // Handle navigation to chat section via URL hash
-  useEffect(() => {
-    // Check if there's a hash in the URL
-    if (window.location.hash === '#ai-chat') {
-      setShowChat(true);
-      setMinimizeChat(false);
-      // Scroll to chat section with a small delay to ensure components are rendered
-      setTimeout(() => {
-        chatRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    // Listen for hash changes
-    const handleHashChange = () => {
-      if (window.location.hash === '#ai-chat') {
-        setShowChat(true);
-        setMinimizeChat(false);
-        setTimeout(() => {
-          chatRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
-
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -197,15 +155,6 @@ const Dashboard = () => {
             <Button variant="outline" size="sm">
               <Bell className="mr-2 h-4 w-4" />
               Alerts
-            </Button>
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="bg-forest hover:bg-forest-dark text-white"
-              onClick={scrollToChat}
-            >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              AI Chat
             </Button>
             <Button variant="outline" size="sm">
               <User className="mr-2 h-4 w-4" />
@@ -626,53 +575,6 @@ const Dashboard = () => {
            )
         )
       }
-
-        {/* Chat minimize/maximize button */}
-        {showChat && (
-          <Button 
-            onClick={() => setMinimizeChat(!minimizeChat)}
-            variant="outline"
-            size="sm"
-            className="fixed bottom-4 right-4 z-50"
-          >
-            {minimizeChat ? <Maximize className="h-4 w-4" /> : <Minimize className="h-4 w-4" />}
-            {minimizeChat ? " Expand Chat" : " Minimize"}
-          </Button>
-        )}
-        
-        {/* Chat section when not minimized */}
-        {showChat && !minimizeChat && (
-          <div ref={chatRef} className="mt-8">
-            <Card className="border-2 border-forest/20 overflow-hidden rounded-xl shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-forest to-forest-dark text-white py-4">
-                <div className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-3 border-2 border-white bg-gradient-to-br from-sage-light to-sage">
-                    <AvatarFallback className="bg-forest-light text-white"><Sparkles className="h-4 w-4" /></AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle>AI Health Assistant</CardTitle>
-                    <p className="text-xs text-white/80">Powered by Google Gemini</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <AIChat />
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {/* Minimized chat indicator */}
-        {showChat && minimizeChat && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed bottom-16 right-4 bg-gradient-to-r from-forest to-forest-dark text-white p-3 rounded-lg shadow-lg z-50 flex items-center"
-          >
-            <MessageSquare className="h-5 w-5 mr-2" />
-            <span className="text-sm font-medium">Chat Minimized</span>
-          </motion.div>
-        )}
       </div>
     </Layout>
   );

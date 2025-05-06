@@ -53,19 +53,12 @@ const ProtectedRoute = ({ element, requiredRole }: ProtectedRouteProps) => {
   
   // Check if user is authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="login" />;
   }
   
   // Check if user has required role (if specified)
-  if (requiredRole && user?.role !== requiredRole) {
-    // Different redirects based on role
-    if (user?.role === "admin") {
-      return <Navigate to="/admin-dashboard" />;
-    } else if (user?.role === "doctor") {
-      return <Navigate to="/doctor" />;
-    } else {
-      return <Navigate to="/dashboard" />;
-    }
+  if (requiredRole && user?.role !== requiredRole && requiredRole !== "user") {
+    return <Navigate to="dashboard" />;
   }
   
   return <>{element}</>;
