@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Dumbbell, Search, Activity, RotateCcw, ThumbsUp, Timer } from "lucide-react";
@@ -11,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/layout/Layout";
 import ExerciseAnalyzer from "@/components/ExerciseAnalyzer";
+import ExerciseDashboard from "@/components/ExerciseDashboard";
 
 // Sample exercise data for demonstration
 const SAMPLE_EXERCISES = [
@@ -62,24 +62,144 @@ const SAMPLE_EXERCISES = [
     sets: "3",
     reps: "Hold for 30-60 seconds",
     restTime: "60 seconds"
+  },
+  {
+    name: "Hip Circles",
+    type: "Mobility",
+    difficulty: "Beginner",
+    muscles: ["Hips", "Lower Back", "Core"],
+    steps: [
+      "Stand with feet shoulder-width apart and hands on hips",
+      "Rotate your hips in a circular motion, making a complete circle",
+      "Perform rotations in one direction, then switch to the opposite direction",
+      "Keep your upper body stable throughout the movement"
+    ],
+    tips: "Focus on making smooth, controlled circles and engage your core",
+    sets: "2",
+    reps: "10-12 circles in each direction",
+    restTime: "30 seconds"
+  },
+  {
+    name: "Wrist Rotate",
+    type: "Mobility",
+    difficulty: "Beginner",
+    muscles: ["Wrists", "Forearms"],
+    steps: [
+      "Extend your arms in front of you",
+      "Make fists with both hands",
+      "Rotate your wrists in circular motions",
+      "Perform rotations in both clockwise and counterclockwise directions"
+    ],
+    tips: "Keep movements slow and controlled, avoid overextending",
+    sets: "2",
+    reps: "10-15 rotations in each direction",
+    restTime: "20 seconds"
+  },
+  {
+    name: "Arm Circles",
+    type: "Mobility",
+    difficulty: "Beginner",
+    muscles: ["Shoulders", "Upper Back", "Arms"],
+    steps: [
+      "Stand with feet shoulder-width apart",
+      "Extend your arms out to the sides at shoulder height",
+      "Move your arms in a circular motion, making small circles",
+      "Gradually increase to larger circles, then reverse direction"
+    ],
+    tips: "Keep your shoulders relaxed and maintain good posture",
+    sets: "2",
+    reps: "10 small circles, 10 medium circles, 10 large circles in each direction",
+    restTime: "45 seconds"
   }
 ];
 
 const LearnExerciseAI = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [exerciseType, setExerciseType] = useState("all");
+  const { toast } = useToast();
   const [userPrompt, setUserPrompt] = useState("");
   const [generatedWorkout, setGeneratedWorkout] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  // Filter exercises based on search and type
-  const filteredExercises = SAMPLE_EXERCISES.filter(exercise => {
-    const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = exerciseType === "all" || exercise.type.toLowerCase() === exerciseType.toLowerCase();
-    return matchesSearch && matchesType;
-  });
+  const [activeTab, setActiveTab] = useState<string>("exercises"); // Added state for active tab
+  
+  // Interface for exercise reports
+  interface ExerciseReport {
+    id: string;
+    exercise: string;
+    date: string;
+    duration: number;
+    repCount: number;
+    formScore: number;
+    calories: number;
+  }
+  
+  // Handle saving a report
+  const handleSaveReport = (reportContent: string) => {
+    try {
+      // Parse duration from report
+      const durationMatch = reportContent.match(/Total Duration\s*\n([0-9:]+)/);
+      const duration = durationMatch ? convertTimeToSeconds(durationMatch[1]) : 0;
+      
+      // Parse rep count from report
+      const repCountMatch = reportContent.match(/Repetitions\s*\n(\d+)/);
+      const repCount = repCountMatch ? parseInt(repCountMatch[1], 10) : 0;
+      
+      // Parse form score from report
+      const formScoreMatch = reportContent.match(/Form Quality\s*\n(\d+)%/);
+      const formScore = formScoreMatch ? parseInt(formScoreMatch[1], 10) : 0;
+      
+      // Parse calories from report
+      const caloriesMatch = reportContent.match(/Calories Burned\s*\n([\d.]+)/);
+      const calories = caloriesMatch ? parseFloat(caloriesMatch[1]) : 0;
+      
+      // Only proceed if we have an exercise selected
+      if (selectedExercise) {
+        // Create report object
+        const report: Omit<ExerciseReport, 'id' | 'date'> = {
+          exercise: selectedExercise,
+          duration,
+          repCount,
+          formScore,
+          calories
+        };
+        
+        // Get existing reports from localStorage
+        const existingReportsStr = localStorage.getItem('exerciseReports');
+        let existingReports: ExerciseReport[] = [];
+        
+        if (existingReportsStr) {
+          existingReports = JSON.parse(existingReportsStr);
+        }
+        
+        // Add new report
+        const newReport: ExerciseReport = {
+          ...report,
+          id: Date.now().toString(),
+          date: new Date().toISOString()
+        };
+        
+        // Save back to localStorage
+        localStorage.setItem('exerciseReports', JSON.stringify([...existingReports, newReport]));
+        
+        toast({
+          title: "Report Saved",
+          description: `Your ${selectedExercise} exercise report has been saved to your dashboard.`
+        });
+      }
+    } catch (error) {
+      console.error("Error saving report:", error);
+      toast({
+        title: "Error Saving Report",
+        description: "There was a problem saving your exercise report.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Helper function to convert MM:SS to seconds
+  const convertTimeToSeconds = (timeStr: string): number => {
+    const [minutes, seconds] = timeStr.split(':').map(Number);
+    return (minutes * 60) + seconds;
+  };
 
   // Handle generating AI workout plan
   const generateWorkoutPlan = async () => {
@@ -104,15 +224,15 @@ Based on your goals to ${userPrompt.toLowerCase().includes("weight loss") ? "los
 
 ## Week 1-2: Foundation
 - **Monday**: 3 sets of 12 Push-ups, 3 sets of 15 Squats, 3 sets of 30-second Planks
-- **Wednesday**: 30 minutes of brisk walking, 3 sets of 10 Lunges (each leg)
-- **Friday**: 3 sets of 12 Push-ups, 3 sets of 15 Squats, 3 sets of 30-second Planks
+- **Wednesday**: 30 minutes of brisk walking, 3 sets of 10 Hip Circles (each direction), 2 sets of Arm Circles
+- **Friday**: 3 sets of 12 Push-ups, 3 sets of 15 Squats, 3 sets of Wrist Rotate exercises
 
 ## Week 3-4: Progression
 - **Monday**: 4 sets of 15 Push-ups, 4 sets of 20 Squats, 3 sets of 45-second Planks
-- **Wednesday**: 30 minutes of interval training (alternating 3 minutes brisk walk, 1 minute jog)
-- **Friday**: 4 sets of 15 Push-ups, 4 sets of 20 Squats, 3 sets of 45-second Planks
+- **Wednesday**: 30 minutes of interval training (alternating 3 minutes brisk walk, 1 minute jog), 3 sets of Hip Circles, 3 sets of Arm Circles
+- **Friday**: 4 sets of 15 Push-ups, 4 sets of 20 Squats, 4 sets of Wrist Rotate exercises
 
-Rest 60-90 seconds between sets. Focus on proper form over quantity.
+Start each workout with 5 minutes of mobility exercises (Hip Circles and Arm Circles) to warm up. Rest 60-90 seconds between sets. Focus on proper form over quantity.
 `;
       
       setGeneratedWorkout(sampleResponse);
@@ -139,206 +259,123 @@ Rest 60-90 seconds between sets. Focus on proper form over quantity.
       description: `Analyzing ${exerciseName} form and technique...`
     });
   };
+  
+  // Handle starting an exercise from dashboard
+  const handleStartExercise = (exerciseName: string) => {
+    setActiveTab("exercises");
+    analyzeExercise(exerciseName);
+  };
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 text-center"
-        >
-          <h1 className="text-4xl font-bold mb-3 text-forest dark:text-sage-light">Learn Exercise with AI</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover exercises, learn proper form, and get AI-powered workout plans tailored to your fitness goals
-          </p>
-        </motion.div>
-
-        <Tabs defaultValue="exercises" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto mb-8 grid-cols-2">
-            <TabsTrigger value="exercises">Exercise Library</TabsTrigger>
-            <TabsTrigger value="ai-planner">AI Workout Planner</TabsTrigger>
+      <div className="container py-8">
+        <h1 className="text-4xl font-bold mb-6">Learn & Exercise with AI</h1>
+        
+        <Tabs defaultValue="exercises" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="exercises">Exercises</TabsTrigger>
+            <TabsTrigger value="workout">Workout Plan</TabsTrigger>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           </TabsList>
           
-          {/* Exercise Library Tab */}
           <TabsContent value="exercises">
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col md:flex-row gap-4 justify-between">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    placeholder="Search exercises..."
-                    className="pl-10"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  <Button 
-                    variant={exerciseType === "all" ? "default" : "outline"}
-                    onClick={() => setExerciseType("all")}
-                    className="flex-grow md:flex-grow-0"
-                  >
-                    All
-                  </Button>
-                  <Button 
-                    variant={exerciseType === "strength" ? "default" : "outline"}
-                    onClick={() => setExerciseType("strength")}
-                    className="flex-grow md:flex-grow-0"
-                  >
-                    <Dumbbell className="mr-1 h-4 w-4" />
-                    Strength
-                  </Button>
-                  <Button 
-                    variant={exerciseType === "core" ? "default" : "outline"}
-                    onClick={() => setExerciseType("core")}
-                    className="flex-grow md:flex-grow-0"
-                  >
-                    <Activity className="mr-1 h-4 w-4" />
-                    Core
-                  </Button>
-                </div>
+            {selectedExercise ? (
+              <ExerciseAnalyzer 
+                exercise={selectedExercise} 
+                onClose={() => setSelectedExercise(null)}
+                onSaveReport={handleSaveReport}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {SAMPLE_EXERCISES.map((exercise) => (
+                  <Card key={exercise.name} className="overflow-hidden">
+                    <CardHeader className="pb-3">
+                      <CardTitle>{exercise.name}</CardTitle>
+                      <CardDescription>
+                        <Badge variant="outline" className="mr-1">{exercise.type}</Badge>
+                        <Badge variant="outline">{exercise.difficulty}</Badge>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm mb-4">
+                        <strong>Target Muscles: </strong>
+                        {exercise.muscles.join(", ")}
+                      </p>
+                      <p className="text-sm mb-2"><strong>Tips:</strong> {exercise.tips}</p>
+                    </CardContent>
+                    <CardFooter className="bg-muted/50 flex justify-between pt-3">
+                      <div className="text-xs text-muted-foreground">
+                        {exercise.sets} sets × {exercise.reps} reps
+                      </div>
+                      <Button size="sm" onClick={() => analyzeExercise(exercise.name)}>
+                        Analyze
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
-
-              {selectedExercise ? (
-                <ExerciseAnalyzer 
-                  exercise={selectedExercise}
-                  onClose={() => setSelectedExercise(null)} 
-                />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredExercises.length > 0 ? (
-                    filteredExercises.map((exercise, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                      >
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                              {exercise.name}
-                              <Badge variant="outline">{exercise.difficulty}</Badge>
-                            </CardTitle>
-                            <CardDescription>
-                              <span className="font-medium">{exercise.type}</span> • Works: {exercise.muscles.join(", ")}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <h4 className="font-semibold mb-2">How to perform:</h4>
-                            <ol className="list-decimal ml-5 space-y-1 text-sm">
-                              {exercise.steps.map((step, i) => (
-                                <li key={i}>{step}</li>
-                              ))}
-                            </ol>
-                            
-                            <div className="mt-4 pt-3 border-t border-border">
-                              <p className="text-sm text-muted-foreground">
-                                <strong>Tip:</strong> {exercise.tips}
-                              </p>
-                            </div>
-                          </CardContent>
-                          <CardFooter className="flex flex-col gap-3">
-                            <div className="flex justify-between text-sm w-full">
-                              <div className="flex items-center gap-1">
-                                <RotateCcw className="h-4 w-4 text-muted-foreground" />
-                                <span>{exercise.sets} sets</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <ThumbsUp className="h-4 w-4 text-muted-foreground" />
-                                <span>{exercise.reps}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Timer className="h-4 w-4 text-muted-foreground" />
-                                <span>Rest: {exercise.restTime}</span>
-                              </div>
-                            </div>
-                            <Button 
-                              variant="default" 
-                              className="w-full"
-                              onClick={() => analyzeExercise(exercise.name)}
-                            >
-                              Analyze Form & Technique
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      </motion.div>
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-muted-foreground">No exercises found matching your criteria.</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            )}
           </TabsContent>
           
-          {/* AI Workout Planner Tab */}
-          <TabsContent value="ai-planner">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Generate Your Workout Plan</CardTitle>
-                  <CardDescription>
-                    Describe your fitness goals, experience level, and any preferences to get a personalized workout plan.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    placeholder="Example: I want to lose weight and tone my arms. I can work out 3 days a week for 30 minutes. I don't have any equipment at home."
-                    value={userPrompt}
-                    onChange={(e) => setUserPrompt(e.target.value)}
-                    rows={6}
-                    className="resize-none mb-4"
-                  />
-                  <Button 
-                    onClick={generateWorkoutPlan} 
-                    className="w-full" 
-                    disabled={isLoading || !userPrompt}
-                  >
-                    {isLoading ? (
-                      <>Generating Plan...</>
-                    ) : (
-                      <>
-                        Generate Workout Plan
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card className={generatedWorkout ? "" : "bg-muted/40"}>
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    Your Personalized Workout Plan
-                    {generatedWorkout && (
-                      <Button variant="ghost" size="sm" onClick={resetWorkout}>
-                        <RotateCcw className="h-4 w-4 mr-1" /> Reset
-                      </Button>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    {generatedWorkout ? "Here's your AI-generated workout plan based on your goals" : "Your plan will appear here after generation"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {generatedWorkout ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <div className="whitespace-pre-line">{generatedWorkout}</div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <Activity className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                      <p>Fill out your details and click "Generate Workout Plan"</p>
-                    </div>
+          <TabsContent value="workout">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Workout Plan Generator</CardTitle>
+                <CardDescription>
+                  Describe your fitness goals and preferences to generate a personalized workout plan
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <Textarea
+                      placeholder="Describe your fitness goals, preferences, and any limitations (e.g., 'I want to build upper body strength, have access to dumbbells only, and can exercise 3 times a week')"
+                      value={userPrompt}
+                      onChange={(e) => setUserPrompt(e.target.value)}
+                      className="min-h-[120px]"
+                    />
+                  </div>
+                  
+                  {generatedWorkout && (
+                    <Card className="bg-muted/50">
+                      <CardContent className="pt-6">
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <div dangerouslySetInnerHTML={{ __html: generatedWorkout.replace(/\n/g, '<br>') }} />
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button 
+                  variant="ghost" 
+                  onClick={resetWorkout}
+                  disabled={!generatedWorkout || isLoading}
+                >
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Reset
+                </Button>
+                <Button 
+                  onClick={generateWorkoutPlan}
+                  disabled={isLoading || !userPrompt}
+                >
+                  {isLoading ? (
+                    <>Generating...</>
+                  ) : (
+                    <>
+                      <Dumbbell className="mr-2 h-4 w-4" />
+                      Generate Workout Plan
+                    </>
+                  )}
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="dashboard">
+            <ExerciseDashboard onStartExercise={handleStartExercise} />
           </TabsContent>
         </Tabs>
       </div>

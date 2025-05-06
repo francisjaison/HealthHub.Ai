@@ -1,18 +1,44 @@
-
 import { useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 
+// Common route patterns that should redirect to login instead of showing 404
+const LOGIN_REDIRECT_PATTERNS = [
+  /\/login$/,       // Ends with /login
+  /\/dashboard\/login$/,
+  /\/ocr\/login$/,
+  /\/auth\/login$/
+];
+
 const NotFound = () => {
   const location = useLocation();
+  const path = location.pathname;
+
+  // Check if this is a route that should redirect to login
+  const shouldRedirectToLogin = LOGIN_REDIRECT_PATTERNS.some(pattern => 
+    pattern.test(path)
+  );
+
+  // For specific login-related paths, redirect to the login page
+  if (shouldRedirectToLogin) {
+    return <Navigate to="/login" replace />;
+  }
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
+    // Don't log errors for known patterns that will be handled by the application
+    const isCommonMissingRoute = 
+      path.includes('/health-check') || 
+      path.includes('/api/') || 
+      LOGIN_REDIRECT_PATTERNS.some(pattern => pattern.test(path));
+
+    if (!isCommonMissingRoute) {
+      console.error(
+        "404 Error: User attempted to access non-existent route:",
+        path
+      );
+    }
+  }, [path]);
 
   return (
     <Layout>

@@ -1,7 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext'; // Assuming useAuth provides the token
 
 // Base URL for your API (replace with actual backend URL)
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 // Helper function to make authenticated API requests
 const fetchAuthenticated = async (url: string, token: string | null, options: RequestInit = {}) => {

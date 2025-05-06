@@ -1,17 +1,17 @@
-
 import axios from 'axios';
 
 // Configuration for AI services
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || "";
+// No OpenAI dependency at all
 
 // Helper function to get text from Gemini API
 export const getGeminiResponse = async (prompt: string): Promise<string> => {
   try {
     // Check if API key is available
     if (!GEMINI_API_KEY) {
-      console.error("Gemini API key is not set");
-      return "AI service is not configured. Please provide an API key.";
+      console.log("Using local exercise data instead of API");
+      // Return a local response instead of requiring an API key
+      return "AI service is not configured. Camera analysis will still work.";
     }
 
     // Gemini API endpoint
@@ -53,49 +53,24 @@ export const getHealthAdvice = async (query: string): Promise<string> => {
   return getGeminiResponse(healthPrompt);
 };
 
-// Helper function for OpenAI API calls
-export const getOpenAIResponse = async (prompt: string): Promise<string> => {
-  try {
-    // Check if API key is available
-    if (!OPENAI_API_KEY) {
-      console.error("OpenAI API key is not set");
-      return "OpenAI service is not configured. Please provide an API key.";
-    }
-
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4-turbo", // You can change this to a different model if needed
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (response.data.choices && response.data.choices[0].message) {
-      return response.data.choices[0].message.content;
-    }
-    
-    return "Could not generate a response from OpenAI.";
-  } catch (error) {
-    console.error("Error calling OpenAI API:", error);
-    return "Error communicating with OpenAI service.";
-  }
-};
-
 // Helper function for exercise analysis
 export const getExerciseAnalysis = async (exercise: string): Promise<string> => {
+  // Check if API key is available first
+  if (!GEMINI_API_KEY) {
+    console.log("No API key available, using local exercise data");
+    
+    // Return pre-written exercise descriptions based on exercise type
+    if (exercise === "Push-ups") {
+      return "AI service is not configured. Camera analysis will still work.";
+    } else if (exercise === "Squats") {
+      return "AI service is not configured. Camera analysis will still work.";
+    } else if (exercise === "Plank") {
+      return "AI service is not configured. Camera analysis will still work.";
+    } else {
+      return "AI service is not configured. Camera analysis will still work.";
+    }
+  }
+  
   const analysisPrompt = `Provide a detailed analysis of the exercise "${exercise}" including:
     1. Proper form and technique
     2. Common mistakes to avoid
@@ -106,6 +81,6 @@ export const getExerciseAnalysis = async (exercise: string): Promise<string> => 
     
     Format the response in markdown with clear headings and bullet points.`;
   
-  // Use OpenAI for more detailed exercise analysis
-  return getOpenAIResponse(analysisPrompt);
+  // Use Gemini only for exercise analysis
+  return getGeminiResponse(analysisPrompt);
 };

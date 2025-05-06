@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,7 +17,12 @@ import {
   Bell, 
   AlertCircle,
   LucideBarChart,
-  LucideLineChart
+  LucideLineChart,
+  PieChart,
+  Dumbbell,
+  Brain,
+  Apple,
+  ArrowRight
 } from "lucide-react";
 import { 
   AreaChart, Area, 
@@ -156,6 +162,59 @@ const Dashboard = () => {
         {isErrorHeartRate && renderError(errorHeartRate)}
         {isErrorActivity && renderError(errorActivity)}
         {isErrorAppointments && renderError(errorAppointments)}
+
+        {/* Health Assessment Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6"
+        >
+          <Card className="bg-gradient-to-r from-forest/10 to-sage/10 dark:from-forest/30 dark:to-sage/20 dark:border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-forest dark:text-sage-light">Health Assessment</CardTitle>
+              <CardDescription className="dark:text-slate-300">Comprehensive analysis of your health based on your data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div className="flex flex-col items-center p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm dark:shadow-slate-900/50">
+                  <Heart className="h-8 w-8 text-red-500 dark:text-red-400 mb-2" />
+                  <p className="text-sm font-medium dark:text-slate-200">Cardiovascular</p>
+                  <p className="text-lg font-bold dark:text-white">72<span className="text-xs font-normal text-muted-foreground dark:text-slate-400">/100</span></p>
+                </div>
+                <div className="flex flex-col items-center p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm dark:shadow-slate-900/50">
+                  <Apple className="h-8 w-8 text-green-500 dark:text-green-400 mb-2" />
+                  <p className="text-sm font-medium dark:text-slate-200">Metabolic</p>
+                  <p className="text-lg font-bold dark:text-white">84<span className="text-xs font-normal text-muted-foreground dark:text-slate-400">/100</span></p>
+                </div>
+                <div className="flex flex-col items-center p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm dark:shadow-slate-900/50">
+                  <Dumbbell className="h-8 w-8 text-amber-500 dark:text-amber-400 mb-2" />
+                  <p className="text-sm font-medium dark:text-slate-200">Musculoskeletal</p>
+                  <p className="text-lg font-bold dark:text-white">78<span className="text-xs font-normal text-muted-foreground dark:text-slate-400">/100</span></p>
+                </div>
+                <div className="flex flex-col items-center p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm dark:shadow-slate-900/50">
+                  <Brain className="h-8 w-8 text-purple-500 dark:text-purple-400 mb-2" />
+                  <p className="text-sm font-medium dark:text-slate-200">Cognitive</p>
+                  <p className="text-lg font-bold dark:text-white">90<span className="text-xs font-normal text-muted-foreground dark:text-slate-400">/100</span></p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm dark:shadow-slate-900/50">
+                <div>
+                  <p className="text-sm font-medium dark:text-slate-200">Overall Health Score</p>
+                  <p className="text-2xl font-bold text-forest dark:text-emerald-400">81<span className="text-xs font-normal text-muted-foreground dark:text-slate-400">/100</span></p>
+                </div>
+                <PieChart className="h-10 w-10 text-forest dark:text-emerald-400" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button asChild className="w-full bg-forest hover:bg-forest/90 dark:bg-forest/80 dark:hover:bg-forest/70">
+                <Link to="/health-assessment">
+                  View Detailed Assessment <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </motion.div>
 
         {isLoadingSummary ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
