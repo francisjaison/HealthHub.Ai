@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -37,6 +36,7 @@ import DiseaseMetrics from "./pages/DiseaseMetrics";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import PatientRecords from "./pages/PatientRecords";
+import AIChatbot from "./pages/AIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +94,7 @@ const AppWithAuth = () => (
     <Route path="/doctor" element={<ProtectedRoute element={<DoctorDashboard />} requiredRole="doctor" />} />
     <Route path="/admin" element={<ProtectedRoute element={<AdminDashboard />} requiredRole="admin" />} />
     <Route path="/patient-records" element={<ProtectedRoute element={<PatientRecords />} requiredRole="doctor" />} />
+    <Route path="/ai-chatbot" element={<ProtectedRoute element={<AIChatbot />} />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

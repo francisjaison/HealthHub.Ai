@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { FileManagement } from "@/components/file-management";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -404,6 +404,22 @@ const AdminPanel = () => {
                   </Table>
                 </CardContent>
               </Card>
+            )}
+            
+            {activeTab === "reports" && (
+              <div>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xl font-semibold text-forest">Patient Files & Documents</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FileManagement 
+                      userRole="admin" 
+                      showAllPatients={true}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
         </div>
