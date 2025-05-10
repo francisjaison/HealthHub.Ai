@@ -12,7 +12,7 @@ from ..schemas import (
     AppointmentStatusUpdate,
     DoctorAdvice
 )
-from ..auth import get_current_user
+from .auth import get_current_user
 
 router = APIRouter(
     prefix="/api/doctor",

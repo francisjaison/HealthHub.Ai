@@ -85,16 +85,41 @@ const Home = () => {
 
   return (
     <Layout>
-      {/* Hero Section with animated elements */}
+      {/* Hero Section with enhanced background */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden px-4">
-        {/* Animated background shapes */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-cream opacity-20 blur-3xl animate-pulse" 
+        {/* Improved animated background with multiple layers */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-sage/5 via-cream/10 to-background">
+          {/* Pattern overlay */}
+          <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM0RDVENTMiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzBoLTZWMGg2djMwem0wIDMwaC02VjQyaDZ2MTh6Ii8+PHBhdGggZD0iTTMwIDMwVjBoNnYzMGgtNnoiIHRyYW5zZm9ybT0icm90YXRlKDkwIDE4IDE1KSIvPjwvZz48L2c+PC9zdmc+')]"></div>
+          
+          {/* Improved animated shapes with better positioning and effects */}
+          <div className="absolute top-1/6 left-1/5 w-72 h-72 rounded-full bg-gradient-to-br from-forest/10 to-sage/20 opacity-30 blur-3xl animate-pulse" 
                style={{ animationDuration: '15s' }}></div>
-          <div className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-sage/20 opacity-25 blur-3xl animate-pulse" 
+          <div className="absolute bottom-1/4 right-1/5 w-80 h-80 rounded-full bg-gradient-to-tr from-sage/20 to-cream/30 opacity-30 blur-3xl animate-pulse" 
                style={{ animationDuration: '18s' }}></div>
-          <div className="absolute top-1/3 right-1/3 w-48 h-48 rounded-full bg-lilac/10 opacity-30 blur-3xl animate-pulse" 
+          <div className="absolute top-1/3 right-1/3 w-64 h-64 rounded-full bg-gradient-to-bl from-lilac/15 to-forest/10 opacity-30 blur-3xl animate-pulse" 
                style={{ animationDuration: '12s' }}></div>
+          
+          {/* Additional animated elements */}
+          <motion.div 
+            className="absolute left-[15%] top-[20%] w-2 h-2 rounded-full bg-forest/40"
+            animate={{ scale: [1, 1.5, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute right-[25%] top-[30%] w-3 h-3 rounded-full bg-sage/50"
+            animate={{ scale: [1, 1.8, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div 
+            className="absolute left-[40%] bottom-[20%] w-2 h-2 rounded-full bg-cream/60"
+            animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          />
+          
+          {/* Subtle gradient overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/50"></div>
         </div>
         
         <div className="container mx-auto max-w-6xl">
@@ -108,7 +133,7 @@ const Home = () => {
             >
               <motion.span 
                 variants={fadeInUp}
-                className="inline-block py-1.5 px-4 rounded-full bg-forest/10 text-forest font-medium text-sm"
+                className="inline-block py-1.5 px-4 rounded-full bg-gradient-to-r from-forest/20 to-forest/10 text-forest font-medium text-sm backdrop-blur-sm shadow-sm"
               >
                 Health Reimagined with AI
               </motion.span>
@@ -120,7 +145,7 @@ const Home = () => {
                 Your Complete <br className="hidden md:inline" />
                 <span className="relative">
                   <span className="relative z-10">AI-Powered</span>
-                  <span className="absolute bottom-1 left-0 w-full h-3 bg-sage/30 -z-10 rounded-sm"></span>
+                  <span className="absolute bottom-1 left-0 w-full h-3 bg-gradient-to-r from-sage/50 to-sage/20 -z-10 rounded-sm"></span>
                 </span> <br className="hidden md:inline" />
                 Health Partner
               </motion.h1>
@@ -140,7 +165,7 @@ const Home = () => {
                 <Link to="/signup">
                   <Button 
                     size="lg" 
-                    className="group bg-forest hover:bg-forest-dark text-white font-medium transition-all duration-300 shadow-md hover:shadow-xl"
+                    className="group bg-gradient-to-r from-forest to-forest-dark text-white font-medium transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105"
                   >
                     Start Your Journey
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -150,14 +175,14 @@ const Home = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="border-forest text-forest hover:bg-forest/5 font-medium"
+                    className="border-forest text-forest hover:bg-forest/5 font-medium backdrop-blur-sm shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
                   >
                     Explore Features
                   </Button>
                 </Link>
               </motion.div>
               
-              {/* Trust indicators - Refined */}
+              {/* Trust indicators - Refined with better styling */}
               <motion.div 
                 variants={fadeInUp}
                 className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start text-muted-foreground space-y-2 sm:space-y-0 sm:space-x-4"
@@ -165,11 +190,10 @@ const Home = () => {
                 {/* Avatar Group */}
                 <div className="flex items-center">
                   <div className="flex -space-x-2 overflow-hidden">
-                    {/* Placeholder images - Replace with actual or better graphics */}
-                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 1"/>
-                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 2"/>
-                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 3"/>
-                    <div className="inline-flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 bg-sage/80 text-xs font-medium text-white">+5k</div>
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover shadow-md" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 1"/>
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover shadow-md" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 2"/>
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover shadow-md" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User 3"/>
+                    <div className="inline-flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 bg-gradient-to-br from-forest to-forest-dark text-xs font-medium text-white shadow-md">+5k</div>
                   </div>
                   <span className="ml-3 text-sm font-medium text-gray-600 dark:text-gray-400">Join 5,000+ users</span>
                 </div>
@@ -184,7 +208,7 @@ const Home = () => {
               </motion.div>
             </motion.div>
             
-            {/* Hero visual - Right side */}
+            {/* Hero visual - Right side with improved styling */}
             <motion.div 
               className="lg:col-span-2 relative"
               initial={{ opacity: 0, x: 30 }}
@@ -192,9 +216,9 @@ const Home = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               <div className="relative h-[400px] md:h-[500px]">
-                {/* Main visual frame */}
+                {/* Main visual frame with improved styling */}
                 <motion.div 
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-forest-light/20 to-forest-dark/40 backdrop-blur-sm p-4 shadow-2xl overflow-hidden"
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/80 to-cream/40 dark:from-slate-800/80 dark:to-slate-900/40 backdrop-blur-md p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-700/20 overflow-hidden"
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
@@ -205,7 +229,7 @@ const Home = () => {
                   </div>
                   
                   {/* Visual content - App preview mockup */}
-                  <div className="w-full h-full mt-4 rounded-lg bg-white/90 dark:bg-slate-800/80 overflow-hidden flex flex-col">
+                  <div className="w-full h-full mt-4 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-inner overflow-hidden flex flex-col">
                     <div className="h-16 border-b flex items-center px-4">
                       <div className="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center mr-3">
                         <HeartPulse className="h-4 w-4 text-forest" />
@@ -224,24 +248,24 @@ const Home = () => {
                       animate="visible"
                     >
                       {[
-                        { icon: <HeartPulse className="h-5 w-5" />, color: "bg-red-100 text-red-500 dark:bg-red-900/30 dark:text-red-400" },
-                        { icon: <Brain className="h-5 w-5" />, color: "bg-purple-100 text-purple-500 dark:bg-purple-900/30 dark:text-purple-400" },
-                        { icon: <Activity className="h-5 w-5" />, color: "bg-blue-100 text-blue-500 dark:bg-blue-900/30 dark:text-blue-400" },
-                        { icon: <Dumbbell className="h-5 w-5" />, color: "bg-amber-100 text-amber-500 dark:bg-amber-900/30 dark:text-amber-400" },
+                        { icon: <HeartPulse className="h-5 w-5" />, color: "bg-gradient-to-br from-red-100 to-red-50 text-red-500 dark:from-red-900/30 dark:to-red-800/20 dark:text-red-400" },
+                        { icon: <Brain className="h-5 w-5" />, color: "bg-gradient-to-br from-purple-100 to-purple-50 text-purple-500 dark:from-purple-900/30 dark:to-purple-800/20 dark:text-purple-400" },
+                        { icon: <Activity className="h-5 w-5" />, color: "bg-gradient-to-br from-blue-100 to-blue-50 text-blue-500 dark:from-blue-900/30 dark:to-blue-800/20 dark:text-blue-400" },
+                        { icon: <Dumbbell className="h-5 w-5" />, color: "bg-gradient-to-br from-amber-100 to-amber-50 text-amber-500 dark:from-amber-900/30 dark:to-amber-800/20 dark:text-amber-400" },
                       ].map((item, i) => (
                         <motion.div 
                           key={i}
-                          className="rounded-lg bg-white dark:bg-slate-700/50 shadow-sm p-3 flex flex-col justify-between"
+                          className="rounded-lg bg-white dark:bg-slate-700/50 shadow-sm border border-gray-100 dark:border-slate-600/10 p-3 flex flex-col justify-between"
                           variants={itemVariants}
                           whileHover={{ scale: 1.05, y: -5 }}
                           transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         >
-                          <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mb-2`}>
+                          <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mb-2 shadow-sm`}>
                             {item.icon}
                           </div>
                           <div className="space-y-1.5">
-                            <div className="h-3 w-full bg-gray-100 rounded-full"></div>
-                            <div className="h-3 w-2/3 bg-gray-100 rounded-full"></div>
+                            <div className="h-3 w-full bg-gray-100 dark:bg-slate-600/30 rounded-full"></div>
+                            <div className="h-3 w-2/3 bg-gray-100 dark:bg-slate-600/30 rounded-full"></div>
                           </div>
                         </motion.div>
                       ))}
@@ -257,23 +281,23 @@ const Home = () => {
                   </div>
                 </motion.div>
                 
-                {/* Floating elements */}
+                {/* Floating elements with improved styling */}
                 <motion.div 
-                  className="absolute -right-6 top-1/4 p-3 rounded-lg bg-white shadow-xl"
+                  className="absolute -right-6 top-1/4 p-3 rounded-lg bg-white shadow-xl border border-white/50 backdrop-blur-sm"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                 >
                   <BarChart4 className="h-5 w-5 text-forest" />
                 </motion.div>
                 <motion.div 
-                  className="absolute -left-8 top-1/2 p-3 rounded-lg bg-white shadow-xl"
+                  className="absolute -left-8 top-1/2 p-3 rounded-lg bg-white shadow-xl border border-white/50 backdrop-blur-sm"
                   animate={{ y: [0, 10, 0] }}
                   transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
                 >
                   <FileText className="h-5 w-5 text-forest" />
                 </motion.div>
                 <motion.div 
-                  className="absolute -bottom-4 left-1/3 p-3 rounded-lg bg-white shadow-xl"
+                  className="absolute -bottom-4 left-1/3 p-3 rounded-lg bg-white shadow-xl border border-white/50 backdrop-blur-sm"
                   animate={{ y: [0, -8, 0] }}
                   transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut", delay: 0.5 }}
                 >
@@ -285,9 +309,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Features Section with improved styling */}
+      <section className="py-20 px-4 relative overflow-hidden">
+        {/* Subtle background pattern for this section */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-sage/5 to-background opacity-60"></div>
+        <div className="absolute inset-0 -z-10 opacity-[0.15] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAgMzBhMSAxIDAgMSAxIDAgMiAxIDEgMCAwIDEgMC0yem0xMCAwYTEgMSAwIDEgMSAwIDIgMSAxIDAgMCAxIDAtMnptLTIwIDBhMSAxIDAgMSAxIDAgMiAxIDEgMCAwIDEgMC0yem0xMCAxMGExIDEgMCAxIDEgMCAyIDEgMSAwIDAgMSAwLTJ6bS0xMC0yMGExIDEgMCAxIDEgMCAyIDEgMSAwIDAgMSAwLTJ6bTIwIDBhMSAxIDAgMSAxIDAgMiAxIDEgMCAwIDEgMC0yem0tMTAgMjBhMSAxIDAgMSAxIDAgMiAxIDEgMCAwIDEgMC0yem0xMC0xMGExIDEgMCAxIDEgMCAyIDEgMSAwIDAgMSAwLTJ6bS0yMCAwYTEgMSAwIDEgMSAwIDIgMSAxIDAgMCAxIDAtMnoiIGZpbGw9IiM0RDVENTMiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==')]"></div>
+        
+        <div className="container mx-auto max-w-6xl relative">
           <div className="text-center mb-16">
             <motion.h2 
               className="text-3xl md:text-4xl font-bold text-forest mb-4"
